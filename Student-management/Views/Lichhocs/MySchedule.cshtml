@@ -1,0 +1,63 @@
+﻿@model Student_management.Models.MyScheduleViewModel
+
+@{
+    ViewData["Title"] = "Thời khóa biểu cá nhân";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1>@ViewData["Title"]</h1>
+        <p class="text-muted mb-0">Giáo viên: <strong>@Model.TenGiaoVien</strong></p>
+    </div>
+
+    @* <<< THÊM FORM LỌC HỌC KỲ >>> *@
+    <div>
+        <form asp-action="MySchedule" method="get" class="d-flex align-items-center">
+            <select asp-for="SelectedHocKyId" asp-items="Model.HocKyOptions" class="form-select me-2" style="width: 300px;" onchange="this.form.submit()"></select>
+            <noscript><button type="submit" class="btn btn-primary">Lọc</button></noscript>
+        </form>
+    </div>
+</div>
+
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        Áp dụng cho: <strong>@Model.TenHocKy</strong>
+    </div>
+    <div class="card-body table-responsive">
+        @{
+            var daysOfWeek = new List<string> { "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy" };
+            var tietHocMax = 10;
+        }
+        <table class="table table-bordered text-center small">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 5%;">Tiết</th>
+                    @foreach (var day in daysOfWeek)
+                    {
+                        <th>@day</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int t = 1; t <= tietHocMax; t++)
+                {
+                    <tr>
+                        <td class="fw-bold">@t</td>
+                        @foreach (var day in daysOfWeek)
+                        {
+                            <td>
+                                @if (Model.TimetableGrid.ContainsKey(day) && Model.TimetableGrid[day].ContainsKey(t))
+                                {
+                                    var lich = Model.TimetableGrid[day][t];
+                                    <div><strong>@lich.MaMonHocNavigation?.TenMonHoc</strong></div>
+                                    <div class="text-muted">Lớp: @lich.MaLopNavigation?.TenLop</div>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
